@@ -50,6 +50,15 @@ We aim to generate datsets for knife object detection task. It could be contain 
             logs/
             dataset.yaml
 
+- Expected `dataset.yaml`: 
+
+        path: /abs/path/to/knife_dataset_v2
+        train: images/train
+        val: images/val
+        names:
+            0: person
+            1: knife
+
 
 ## Description 
 
