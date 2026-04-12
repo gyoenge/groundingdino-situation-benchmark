@@ -32,7 +32,7 @@ We aim to generate datsets for knife object detection task. It could be contain 
 
 - Expected Output: 
 
-        knife_dataset_v2/
+        knife_dataset/
             images/
                 train/
                 val/
@@ -48,6 +48,10 @@ We aim to generate datsets for knife object detection task. It could be contain 
             visualizations/
                 train/
                 val/
+            anncsv/
+                annotation.csv
+                annotation_train.csv
+                annotation_val.csv
             failed/
             logs/
             dataset.yaml
@@ -61,6 +65,11 @@ We aim to generate datsets for knife object detection task. It could be contain 
             0: person
             1: knife
 
+- Expected `annotation.csv`: 
+
+        label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height,split,caption,category
+        knife,312,145,84,210,image_000001.jpg,1024,1024,train,"A man is holding a knife in a kitchen",dangerous
+        person,201,88,502,810,image_000001.jpg,1024,1024,train,"A man is holding a knife in a kitchen",dangerous
 
 ## Description 
 

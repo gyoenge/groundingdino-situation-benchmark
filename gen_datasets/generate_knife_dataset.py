@@ -1,7 +1,7 @@
 import os
+import csv
 import json
 import random
-import shutil
 import logging
 import argparse
 from time import time
@@ -311,7 +311,6 @@ class MultiClassDetector:
 
         target_sizes = [image.size[::-1]]
 
-        # transformers / processor 버전 차이 대응
         try:
             results = self.processor.post_process_grounded_object_detection(
                 outputs,
@@ -322,7 +321,6 @@ class MultiClassDetector:
             )
         except TypeError:
             try:
-                # 일부 버전은 threshold 이름 사용
                 results = self.processor.post_process_grounded_object_detection(
                     outputs,
                     inputs.input_ids,
@@ -331,7 +329,6 @@ class MultiClassDetector:
                     target_sizes=target_sizes,
                 )
             except TypeError:
-                # 일부 구현/래퍼는 옵션 dict 스타일
                 results = self.processor.post_process_grounded_object_detection(
                     outputs,
                     inputs.input_ids,
@@ -360,6 +357,7 @@ class MultiClassDetector:
             )
         return detections
 
+
 # =========================
 # Saving Utilities
 # =========================
@@ -377,6 +375,7 @@ def ensure_dirs(base_dir: str) -> Dict[str, str]:
         "visualizations_train": os.path.join(base_dir, "visualizations", "train"),
         "visualizations_val": os.path.join(base_dir, "visualizations", "val"),
         "failed": os.path.join(base_dir, "failed"),
+        "anncsv": os.path.join(base_dir, "anncsv"),
     }
     for p in paths.values():
         os.makedirs(p, exist_ok=True)
@@ -467,6 +466,57 @@ def save_visualization(
         draw.text((tx + 3, ty + 1), text, fill=(0, 0, 0))
 
     canvas.save(vis_path)
+
+
+def detection_to_anncsv_rows(
+    image_name: str,
+    split: str,
+    caption: str,
+    category: str,
+    detections: List[DetectionObject],
+    img_w: int,
+    img_h: int,
+) -> List[Dict]:
+    rows = []
+    for det in detections:
+        rows.append(
+            {
+                "label_name": det.label,
+                "bbox_x": int(det.bbox_xywh[0]),
+                "bbox_y": int(det.bbox_xywh[1]),
+                "bbox_width": int(det.bbox_xywh[2]),
+                "bbox_height": int(det.bbox_xywh[3]),
+                "image_name": image_name,
+                "image_width": img_w,
+                "image_height": img_h,
+                "split": split,
+                "caption": caption,
+                "category": category,
+            }
+        )
+    return rows
+
+
+def save_anncsv(csv_path: str, rows: List[Dict]) -> None:
+    fieldnames = [
+        "label_name",
+        "bbox_x",
+        "bbox_y",
+        "bbox_width",
+        "bbox_height",
+        "image_name",
+        "image_width",
+        "image_height",
+        "split",
+        "caption",
+        "category",
+    ]
+
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
 
 
 # =========================
@@ -626,6 +676,10 @@ def main():
     trial_idx = 0
     vis_count = {"train": 0, "val": 0}
 
+    anncsv_rows_all = []
+    anncsv_rows_train = []
+    anncsv_rows_val = []
+
     pbar = tqdm(total=args.num_samples, desc="Generating dataset")
 
     while kept < args.num_samples:
@@ -652,7 +706,7 @@ def main():
             continue
 
         try:
-            raw_detections = detector.detect(image, query="person . knife .")
+            raw_detections = detector.detect(image, query="a person. a knife.")
         except Exception as e:
             failed += 1
             logger.error(f"Detection failed: {e}")
@@ -705,6 +759,21 @@ def main():
         )
         save_metadata(meta_path, spec)
 
+        current_rows = detection_to_anncsv_rows(
+            image_name=image_name,
+            split=spec.split,
+            caption=spec.caption,
+            category=spec.category,
+            detections=detections,
+            img_w=image.width,
+            img_h=image.height,
+        )
+        anncsv_rows_all.extend(current_rows)
+        if spec.split == "train":
+            anncsv_rows_train.extend(current_rows)
+        else:
+            anncsv_rows_val.extend(current_rows)
+
         if args.save_visualizations and vis_count[spec.split] < args.max_visualizations_per_split:
             save_visualization(vis_path, image, detections, color_map)
             vis_count[spec.split] += 1
@@ -719,6 +788,14 @@ def main():
 
     pbar.close()
     write_dataset_yaml(args.output_dir)
+
+    save_anncsv(os.path.join(paths["anncsv"], "annotation.csv"), anncsv_rows_all)
+    save_anncsv(os.path.join(paths["anncsv"], "annotation_train.csv"), anncsv_rows_train)
+    save_anncsv(os.path.join(paths["anncsv"], "annotation_val.csv"), anncsv_rows_val)
+
+    logger.info(f"Saved anncsv: {os.path.join(paths['anncsv'], 'annotation.csv')}")
+    logger.info(f"Saved anncsv train: {os.path.join(paths['anncsv'], 'annotation_train.csv')}")
+    logger.info(f"Saved anncsv val: {os.path.join(paths['anncsv'], 'annotation_val.csv')}")
 
     logger.info(f"Done. saved={kept}, failed={failed}, trials={trial_idx}")
     logger.info(f"Success rate: {kept / max(1, trial_idx):.3f}")
