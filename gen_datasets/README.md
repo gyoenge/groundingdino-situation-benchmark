@@ -1,6 +1,43 @@
-## Generation of Datasets
+# Generation of Datasets
 
 We aim to generate datsets for knife object detection task. It could be contain caption with slight detailed with person's motion (e.g. a person is holding a knife, a person is swinging a knife, ...). 
+
+## Run 
+
+- setting 
+
+    ```bash
+    pip install torch torchvision diffusers transformers accelerate safetensors pillow tqdm sentencepiece
+    ```
+
+- run 
+
+    ```bash
+    python generate_knife_dataset.py \
+        --output_dir ./knife_dataset \
+        --num_samples 200 \
+        --device cuda \
+        --width 1024 \
+        --height 1024 \
+        --steps 30 \
+        --guidance_scale 7.5
+    ```
+
+- Expected Output: 
+
+        knife_dataset/
+            images/
+                image_000000.jpg
+            labels/
+                image_000000.txt
+            annotations/
+                image_000000.json
+            meta/
+                image_000000.meta.json
+            dataset.yaml
+
+
+## Description 
 
 ### Caption Text Design 
 
