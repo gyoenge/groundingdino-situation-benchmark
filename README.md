@@ -2,8 +2,9 @@
 
 ## GroundingDINO Finetuning Dataset Processing/Preparing  
 
-- This repository contains the **code used to create and preprocess the custom dataset for fine-tuning the GroundingDINO model**.
-- The main code for this project is located in the [gyoenge/net-challenge-groundingdino-finetune](https://github.com/gyoenge/net-challenge-groundingdino-finetune) repository. <br/> Please visit it for more details about the project.
+This repository contains the **code used to create and preprocess the custom dataset for fine-tuning the GroundingDINO model**.
+
+The main code for this project is located in the [gyoenge/net-challenge-groundingdino-finetune](https://github.com/gyoenge/net-challenge-groundingdino-finetune) repository. Please visit it for more details about the project.
 
 ### Description
 
