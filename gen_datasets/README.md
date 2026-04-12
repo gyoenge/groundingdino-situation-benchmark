@@ -7,7 +7,9 @@ We aim to generate datsets for knife object detection task. It could be contain 
 - setting 
 
     ```bash
-    pip install torch torchvision diffusers transformers accelerate safetensors pillow tqdm sentencepiece
+    pip install --upgrade pip
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+    pip install diffusers transformers accelerate safetensors pillow tqdm sentencepiece
     ```
 
 - run 
