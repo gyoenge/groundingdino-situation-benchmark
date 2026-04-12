@@ -22,20 +22,32 @@ We aim to generate datsets for knife object detection task. It could be contain 
         --width 1024 \
         --height 1024 \
         --steps 30 \
-        --guidance_scale 7.5
+        --guidance_scale 7.5 \
+        --val_ratio 0.2 \
+        --save_visualizations \
+        --max_visualizations_per_split 30
     ```
 
 - Expected Output: 
 
-        knife_dataset/
+        knife_dataset_v2/
             images/
-                image_000000.jpg
+                train/
+                val/
             labels/
-                image_000000.txt
+                train/
+                val/
             annotations/
-                image_000000.json
+                train/
+                val/
             meta/
-                image_000000.meta.json
+                train/
+                val/
+            visualizations/
+                train/
+                val/
+            failed/
+            logs/
             dataset.yaml
 
 
