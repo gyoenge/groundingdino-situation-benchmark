@@ -19,6 +19,8 @@ We aim to generate datsets for knife object detection task. It could be contain 
         --output_dir ./knife_dataset \
         --num_samples 200 \
         --device cuda \
+        --box_threshold 0.40 \
+        --text_threshold 0.35 \
         --width 1024 \
         --height 1024 \
         --steps 30 \

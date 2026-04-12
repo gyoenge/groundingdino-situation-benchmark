@@ -295,8 +295,8 @@ class MultiClassDetector:
         self,
         model_id: str = "IDEA-Research/grounding-dino-base",
         device: str = "cuda",
-        box_threshold: float = 0.25,
-        text_threshold: float = 0.25,
+        box_threshold: float = 0.40,
+        text_threshold: float = 0.35,
     ):
         self.device = device
         self.box_threshold = box_threshold
@@ -309,17 +309,43 @@ class MultiClassDetector:
         inputs = self.processor(images=image, text=query, return_tensors="pt").to(self.device)
         outputs = self.model(**inputs)
 
-        target_sizes = torch.tensor([image.size[::-1]], device=self.device)
-        results = self.processor.post_process_grounded_object_detection(
-            outputs,
-            inputs.input_ids,
-            box_threshold=self.box_threshold,
-            text_threshold=self.text_threshold,
-            target_sizes=target_sizes,
-        )[0]
+        target_sizes = [image.size[::-1]]
+
+        # transformers / processor 버전 차이 대응
+        try:
+            results = self.processor.post_process_grounded_object_detection(
+                outputs,
+                inputs.input_ids,
+                box_threshold=self.box_threshold,
+                text_threshold=self.text_threshold,
+                target_sizes=target_sizes,
+            )
+        except TypeError:
+            try:
+                # 일부 버전은 threshold 이름 사용
+                results = self.processor.post_process_grounded_object_detection(
+                    outputs,
+                    inputs.input_ids,
+                    threshold=self.box_threshold,
+                    text_threshold=self.text_threshold,
+                    target_sizes=target_sizes,
+                )
+            except TypeError:
+                # 일부 구현/래퍼는 옵션 dict 스타일
+                results = self.processor.post_process_grounded_object_detection(
+                    outputs,
+                    inputs.input_ids,
+                    {
+                        "box_threshold": self.box_threshold,
+                        "text_threshold": self.text_threshold,
+                        "target_sizes": target_sizes,
+                    },
+                )
+
+        result = results[0]
 
         detections: List[DetectionObject] = []
-        for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
+        for score, label, box in zip(result["scores"], result["labels"], result["boxes"]):
             x1, y1, x2, y2 = [float(v) for v in box.tolist()]
             w = max(0.0, x2 - x1)
             h = max(0.0, y2 - y1)
@@ -333,7 +359,6 @@ class MultiClassDetector:
                 )
             )
         return detections
-
 
 # =========================
 # Saving Utilities
