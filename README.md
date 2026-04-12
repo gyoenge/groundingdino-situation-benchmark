@@ -48,3 +48,9 @@
         ```
         python aihub_to_yolo/aihub_to_yolov8txt.py
         ```
+
+## [Added] Generation of Datasets
+
+We aim to generate datsets for knife object detection task. It could be contain caption with slight detailed with person's motion (e.g. a person is holding a knife, a person is swinging a knife, ...). 
+
+See the detailed information in `./gen_datasets/` and insdie `README.md` file. 
