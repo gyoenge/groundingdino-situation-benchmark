@@ -17,14 +17,14 @@ See the detailed information in `./gen_datasets/` and inside `README.md` file.
     <div align="center">
     <table>
         <tr>
-        <td><img src="assets/image_000005.jpg" width="250"/></td>
-        <td><img src="assets/image_000014.jpg" width="250"/></td>
-        <td><img src="assets/image_000017.jpg" width="250"/></td>
+        <td><img src=".assets/image_000005.jpg" width="250"/></td>
+        <td><img src=".assets/image_000014.jpg" width="250"/></td>
+        <td><img src=".assets/image_000017.jpg" width="250"/></td>
         </tr>
         <tr>
-        <td><img src="assets/image_000031.jpg" width="250"/></td>
-        <td><img src="assets/image_000118.jpg" width="250"/></td>
-        <td><img src="assets/image_000144.jpg" width="250"/></td>
+        <td><img src=".assets/image_000031.jpg" width="250"/></td>
+        <td><img src=".assets/image_000118.jpg" width="250"/></td>
+        <td><img src=".assets/image_000144.jpg" width="250"/></td>
         </tr>
     </table>
     </div>
