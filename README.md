@@ -1,6 +1,8 @@
-# Net Challenge Project - **Dataset Process** 
+<!-- # Net Challenge Project - **Dataset Process** 
 
-## GroundingDINO Finetuning Dataset Processing/Preparing  
+## GroundingDINO Finetuning Dataset Processing/Preparing   -->
+
+# GroundingDINO Situation Benchmark 
 
 This repository contains **benchmark construction code for evaluating prompt-based situation understanding capabilities**, data preprocessing scripts, and knife safety detection dataset generation codes.
 
