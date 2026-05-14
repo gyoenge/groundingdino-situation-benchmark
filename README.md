@@ -13,8 +13,29 @@ A project from the K-Digital Net Challenge (2023). This repository contains benc
 
 <!-- The main code for this project is located in the [GroundingDINO Finetune](https://github.com/gyoenge/net-challenge-groundingdino-finetune) repository, based on [Original GroundingDINO Finetune Pipeline Opensource](https://github.com/Asad-Ismail/Grounding-Dino-FineTuning). Please visit it for more details about the project.  -->
 
+### Environment: 
+
+Install dependencies. 
+```bash 
+conda create -n groundingdino python=3.10 # check version 
+conda activate groundingdino
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 # check version
+git clone https://github.com/IDEA-Research/GroundingDINO.git
+cd GroundingDINO/
+pip install -e . --no-build-isolation 
+```
+
+Download pre-trained model weights.
+```bash 
+mkdir weights
+cd weights
+wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+cd ../.. 
+```
+
 ### Run: 
 
+Inside the project root, 
 ```bash 
 python main.py \
   --annotations data/annotations.json \
