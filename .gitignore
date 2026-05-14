@@ -5,6 +5,9 @@ __pycache__
 gen_datasets/knife_dataset/
 gen_datasets/knife_dataset/* 
 
+# generated dataset 
+data 
+
 # grounding dino clone 
 GroundingDINO/ 
 
