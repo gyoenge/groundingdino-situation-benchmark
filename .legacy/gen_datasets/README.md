@@ -122,6 +122,23 @@ We aim to generate datsets for knife object detection task. It could be contain 
     - A person is hiding a knife behind their back in a street
     - A man is threatening someone with a knife in a parking lot
 
+
+    <div align="center">
+    <table>
+        <tr>
+        <td><img src="../../.assets/image_000005.jpg" width="250"/></td>
+        <td><img src="../../.assets/image_000014.jpg" width="250"/></td>
+        <td><img src="../../.assets/image_000017.jpg" width="250"/></td>
+        </tr>
+        <tr>
+        <td><img src="../../.assets/image_000031.jpg" width="250"/></td>
+        <td><img src="../../.assets/image_000118.jpg" width="250"/></td>
+        <td><img src="../../.assets/image_000144.jpg" width="250"/></td>
+        </tr>
+    </table>
+    </div>
+
+
 ### Image Generation Strategy (SDXL)
 
 - Main goal: to train detection model → exact location + variety situations 
