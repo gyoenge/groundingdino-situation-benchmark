@@ -36,6 +36,15 @@ cd ../..
 ### Run: 
 
 Inside the project root, 
+First run for dataset generation: 
+```bash 
+python gen_dataset.py \
+  --output_dir data \
+  --num_samples 10 \
+  --device cuda
+```
+
+Then run for evaluation: 
 ```bash 
 python main.py \
   --annotations data/annotations.json \
