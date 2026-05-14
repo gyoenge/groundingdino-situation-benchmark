@@ -40,7 +40,7 @@ Inside the project root,
 python main.py \
   --annotations data/annotations.json \
   --predictions outputs/predictions.json \
-  --report outputs/evaluation_report.json
+  --report outputs/evaluation_report.json 
 ```
 
 ---
