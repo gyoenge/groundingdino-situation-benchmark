@@ -1,3 +1,6 @@
 # generated datset
 gen_datasets/knife_dataset/
 gen_datasets/knife_dataset/* 
+
+# grounding dino clone 
+GroundingDINO/ 
