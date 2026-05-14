@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import List, Dict
 
 import torch
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from tqdm import tqdm
 
 from diffusers import StableDiffusionXLPipeline
@@ -218,6 +218,43 @@ def build_benchmark_prompts(prompt_specs):
     return prompts
 
 
+def save_bbox_visualization(
+    image: Image.Image,
+    objects: List[Dict],
+    save_path: Path,
+):
+    vis = image.copy().convert("RGB")
+    draw = ImageDraw.Draw(vis)
+
+    for obj in objects:
+        label = obj["label"]
+        conf = obj.get("confidence", None)
+        x1, y1, x2, y2 = obj["bbox"]
+
+        text = label if conf is None else f"{label} {conf:.2f}"
+
+        draw.rectangle(
+            [x1, y1, x2, y2],
+            outline="red",
+            width=4,
+        )
+
+        text_bbox = draw.textbbox((x1, y1), text)
+        tx1, ty1, tx2, ty2 = text_bbox
+
+        draw.rectangle(
+            [tx1, ty1, tx2 + 4, ty2 + 4],
+            fill="red",
+        )
+        draw.text(
+            (x1 + 2, y1 + 2),
+            text,
+            fill="white",
+        )
+
+    vis.save(save_path)
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -253,8 +290,12 @@ def main():
     torch.manual_seed(args.seed)
 
     output_dir = Path(args.output_dir).resolve()
+
     image_dir = output_dir / "images"
+    vis_bbox_dir = output_dir / "vis_bbox"
+
     image_dir.mkdir(parents=True, exist_ok=True)
+    vis_bbox_dir.mkdir(parents=True, exist_ok=True)
 
     if args.device.startswith("cuda") and not torch.cuda.is_available():
         raise RuntimeError("CUDA requested, but torch.cuda.is_available() is False.")
@@ -298,6 +339,13 @@ def main():
             query="person . knife . dog ."
         )
 
+        vis_bbox_path = vis_bbox_dir / image_name
+        save_bbox_visualization(
+            image=image,
+            objects=detected_objects,
+            save_path=vis_bbox_path,
+        )
+
         sample = {
             "image_id": image_id,
             "image_path": str(image_path.resolve().relative_to(PROJECT_ROOT)),
@@ -330,6 +378,7 @@ def main():
 
     print(f"[DONE] Saved annotations: {annotation_path}")
     print(f"[DONE] Saved images: {image_dir}")
+    print(f"[DONE] Saved bbox visualizations: {vis_bbox_dir}")
 
 
 if __name__ == "__main__":
