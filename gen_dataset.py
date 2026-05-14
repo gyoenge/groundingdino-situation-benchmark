@@ -138,13 +138,22 @@ class GroundingDinoAutoAnnotator:
         outputs = self.model(**inputs)
         target_sizes = [image.size[::-1]]
 
-        results = self.processor.post_process_grounded_object_detection(
-            outputs,
-            inputs.input_ids,
-            box_threshold=self.box_threshold,
-            text_threshold=self.text_threshold,
-            target_sizes=target_sizes,
-        )
+        try:
+            results = self.processor.post_process_grounded_object_detection(
+                outputs,
+                inputs.input_ids,
+                box_threshold=self.box_threshold,
+                text_threshold=self.text_threshold,
+                target_sizes=target_sizes,
+            )
+        except TypeError:
+            results = self.processor.post_process_grounded_object_detection(
+                outputs,
+                inputs.input_ids,
+                threshold=self.box_threshold,
+                text_threshold=self.text_threshold,
+                target_sizes=target_sizes,
+            )
 
         result = results[0]
         objects = []
@@ -243,7 +252,7 @@ def main():
     random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    output_dir = Path(args.output_dir)
+    output_dir = Path(args.output_dir).resolve()
     image_dir = output_dir / "images"
     image_dir.mkdir(parents=True, exist_ok=True)
 
@@ -291,7 +300,7 @@ def main():
 
         sample = {
             "image_id": image_id,
-            "image_path": str(image_path.relative_to(PROJECT_ROOT)),
+            "image_path": str(image_path.resolve().relative_to(PROJECT_ROOT)),
             "category": scenario["category"],
             "generation_prompt": scenario["image_prompt"],
             "prompts": build_benchmark_prompts(scenario["prompts"]),
