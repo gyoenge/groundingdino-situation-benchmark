@@ -3,8 +3,15 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 GROUNDING_DINO_ROOT = PROJECT_ROOT / "GroundingDINO"
-
 sys.path.append(str(GROUNDING_DINO_ROOT))
+DEFAULT_CONFIG_PATH = (
+    GROUNDING_DINO_ROOT
+    / "groundingdino/config/GroundingDINO_SwinT_OGC.py"
+)
+DEFAULT_CHECKPOINT_PATH = (
+    GROUNDING_DINO_ROOT
+    / "weights/groundingdino_swint_ogc.pth"
+)
 
 import torch
 from groundingdino.util.inference import (
@@ -42,18 +49,6 @@ def to_xyxy(box, image_width: int, image_height: int):
         float(min(image_width, x2)),
         float(min(image_height, y2)),
     ]
-
-
-DEFAULT_CONFIG_PATH = (
-    GROUNDING_DINO_ROOT
-    / "groundingdino/config/GroundingDINO_SwinT_OGC.py"
-)
-
-DEFAULT_CHECKPOINT_PATH = (
-    GROUNDING_DINO_ROOT
-    / "weights/groundingdino_swint_ogc.pth"
-)
-
 
 class GroundingDINOInferencer:
     def __init__(
@@ -104,8 +99,8 @@ class GroundingDINOInferencer:
 def run_inference(
     annotation_path: str,
     output_path: str,
-    config_path: str,
-    checkpoint_path: str,
+    config_path: str | Path = DEFAULT_CONFIG_PATH,
+    checkpoint_path: str | Path = DEFAULT_CHECKPOINT_PATH,
     box_threshold: float = 0.35,
     text_threshold: float = 0.25,
     device: str = "cuda",

@@ -37,3 +37,6 @@ def situation_discrimination_score(dangerous_score, nondangerous_score):
 def prompt_specificity_gap(situation_score, composition_score):
     return situation_score - composition_score
 
+
+def is_false_situation_activation(expected: str, score: float, threshold: float) -> bool:
+    return expected == "negative" and score >= threshold
